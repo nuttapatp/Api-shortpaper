@@ -1,0 +1,51 @@
+Manifest-Version: 1.0
+Created-By: Maven Jar Plugin 3.2.0
+Build-Jdk-Spec: 17
+Class-Path: json-20210307.jar javafx-web-22-ea+16.jar javafx-web-22-ea+1
+ 6-win.jar javafx-controls-22-ea+16.jar javafx-controls-22-ea+16-win.jar
+  javafx-graphics-22-ea+16.jar javafx-graphics-22-ea+16-win.jar javafx-b
+ ase-22-ea+16.jar javafx-base-22-ea+16-win.jar javafx-media-22-ea+16.jar
+  javafx-media-22-ea+16-win.jar spark-core-2.9.4.jar slf4j-api-1.7.25.ja
+ r jetty-server-9.4.48.v20220622.jar javax.servlet-api-3.1.0.jar jetty-h
+ ttp-9.4.48.v20220622.jar jetty-util-9.4.48.v20220622.jar jetty-io-9.4.4
+ 8.v20220622.jar jetty-webapp-9.4.48.v20220622.jar jetty-xml-9.4.48.v202
+ 20622.jar jetty-servlet-9.4.48.v20220622.jar jetty-security-9.4.48.v202
+ 20622.jar jetty-util-ajax-9.4.48.v20220622.jar websocket-server-9.4.48.
+ v20220622.jar websocket-common-9.4.48.v20220622.jar websocket-client-9.
+ 4.48.v20220622.jar jetty-client-9.4.48.v20220622.jar websocket-servlet-
+ 9.4.48.v20220622.jar websocket-api-9.4.48.v20220622.jar firebase-admin-
+ 9.2.0.jar google-api-client-2.2.0.jar commons-codec-1.15.jar google-oau
+ th-client-1.34.1.jar google-http-client-gson-1.42.3.jar google-http-cli
+ ent-apache-v2-1.42.3.jar httpcore-4.4.16.jar httpclient-4.5.14.jar goog
+ le-api-client-gson-2.2.0.jar google-http-client-1.43.1.jar jsr305-3.0.2
+ .jar error_prone_annotations-2.18.0.jar j2objc-annotations-1.3.jar open
+ census-api-0.31.1.jar opencensus-contrib-http-util-0.31.1.jar api-commo
+ n-2.12.0.jar auto-value-annotations-1.10.1.jar javax.annotation-api-1.3
+ .2.jar google-auth-library-oauth2-http-1.17.0.jar google-auth-library-c
+ redentials-1.17.0.jar google-cloud-storage-2.22.4.jar failureaccess-1.0
+ .1.jar listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar g
+ oogle-http-client-jackson2-1.43.1.jar google-api-services-storage-v1-re
+ v20230301-2.0.0.jar gson-2.10.1.jar google-cloud-core-2.19.0.jar google
+ -cloud-core-http-2.19.0.jar google-http-client-appengine-1.43.1.jar gax
+ -httpjson-0.114.0.jar google-cloud-core-grpc-2.19.0.jar gax-2.29.0.jar 
+ gax-grpc-2.29.0.jar grpc-alts-1.55.1.jar grpc-grpclb-1.55.1.jar conscry
+ pt-openjdk-uber-2.5.2.jar grpc-auth-1.55.1.jar grpc-protobuf-1.55.1.jar
+  grpc-protobuf-lite-1.55.1.jar grpc-context-1.55.1.jar proto-google-iam
+ -v1-1.15.0.jar protobuf-java-3.23.2.jar protobuf-java-util-3.23.2.jar p
+ roto-google-common-protos-2.20.0.jar threetenbp-1.6.8.jar proto-google-
+ cloud-storage-v2-2.22.4-alpha.jar grpc-google-cloud-storage-v2-2.22.4-a
+ lpha.jar gapic-google-cloud-storage-v2-2.22.4-alpha.jar jackson-core-2.
+ 14.2.jar grpc-api-1.55.1.jar grpc-netty-shaded-1.55.1.jar perfmark-api-
+ 0.26.0.jar grpc-core-1.55.1.jar annotations-4.1.1.4.jar animal-sniffer-
+ annotations-1.23.jar grpc-stub-1.55.1.jar grpc-googleapis-1.55.1.jar ch
+ ecker-qual-3.32.0.jar grpc-xds-1.55.1.jar opencensus-proto-0.2.0.jar gr
+ pc-services-1.55.1.jar re2j-1.6.jar grpc-rls-1.55.1.jar google-cloud-fi
+ restore-3.13.0.jar commons-logging-1.2.jar proto-google-cloud-firestore
+ -v1-3.13.0.jar proto-google-cloud-firestore-bundle-v1-3.13.0.jar opence
+ nsus-contrib-grpc-util-0.31.1.jar guava-31.1-jre.jar netty-codec-http-4
+ .1.94.Final.jar netty-common-4.1.94.Final.jar netty-buffer-4.1.94.Final
+ .jar netty-codec-4.1.94.Final.jar netty-handler-4.1.94.Final.jar netty-
+ resolver-4.1.94.Final.jar netty-transport-native-unix-common-4.1.94.Fin
+ al.jar netty-transport-4.1.94.Final.jar
+Main-Class: org.example.Main
+
