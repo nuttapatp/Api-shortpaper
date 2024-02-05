@@ -22,6 +22,8 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
+        String credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+        System.out.println("Credentials Path: " + credentialsPath);
         initializeFirebase();
         SpringApplication.run(Main.class, args); // Start the Spring Boot application
 
@@ -78,22 +80,23 @@ public class Main {
     public static void initializeFirebase() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             GoogleCredentials credentials;
-            // When running on App Engine, use the default credentials
-            if (System.getenv("GAE_ENV") != null && System.getenv("GAE_ENV").equals("standard")) {
+            String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+
+            if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
+                // Initialize Firebase using the JSON key file from the environment variable
+                FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
+                credentials = GoogleCredentials.fromStream(serviceAccount);
+            } else if (System.getenv("GAE_ENV") != null && System.getenv("GAE_ENV").equals("standard")) {
+                // When running on App Engine Standard, use the default credentials
                 credentials = GoogleCredentials.getApplicationDefault();
             } else {
-                // When running locally, use the path to the service account key
-                String pathToCredentials = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
-                if (pathToCredentials == null || pathToCredentials.isEmpty()) {
-                    throw new FileNotFoundException("Firebase credentials path is not found in environment variables.");
-                }
-                FileInputStream serviceAccount = new FileInputStream(pathToCredentials);
-                credentials = GoogleCredentials.fromStream(serviceAccount);
+                throw new FileNotFoundException("Firebase credentials are not properly configured.");
             }
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(credentials)
                     .build();
+
             FirebaseApp.initializeApp(options);
         }
     }
