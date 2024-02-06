@@ -22,10 +22,18 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
+        System.out.println("GOOGLE_APPLICATION_CREDENTIALS from System: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
+
+
+        initializeFirebase();
+
         String credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
         System.out.println("Credentials Path: " + credentialsPath);
-        initializeFirebase();
         SpringApplication.run(Main.class, args); // Start the Spring Boot application
+
+
+
+
 
     }
 
@@ -77,29 +85,37 @@ public class Main {
     }
 
 
-    public static void initializeFirebase() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            GoogleCredentials credentials;
-            String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+    public static void initializeFirebase() {
+        try {
+            if (FirebaseApp.getApps().isEmpty()) {
+                System.out.println("Initializing Firebase...");
 
-            if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
-                // Initialize Firebase using the JSON key file from the environment variable
+                String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+                System.out.println("Firebase Credentials Path: " + jsonKeyFilePath);
+
+                if (jsonKeyFilePath == null || jsonKeyFilePath.isEmpty()) {
+                    throw new FileNotFoundException("Firebase credentials path is not set.");
+                }
+
                 FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
-                credentials = GoogleCredentials.fromStream(serviceAccount);
-            } else if (System.getenv("GAE_ENV") != null && System.getenv("GAE_ENV").equals("standard")) {
-                // When running on App Engine Standard, use the default credentials
-                credentials = GoogleCredentials.getApplicationDefault();
+                GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
+
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(credentials)
+                        .setDatabaseUrl("https://line-storage-4b555-default-rtdb.asia-southeast1.firebasedatabase.app")
+                        .build();
+
+                FirebaseApp.initializeApp(options);
+                System.out.println("Firebase Initialized Successfully.");
             } else {
-                throw new FileNotFoundException("Firebase credentials are not properly configured.");
+                System.out.println("Firebase already initialized.");
             }
-
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(credentials)
-                    .build();
-
-            FirebaseApp.initializeApp(options);
+        } catch (Exception e) {
+            System.out.println("Error initializing Firebase: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
 
 
 
