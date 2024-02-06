@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.example.utils.UtilityMethods.convertPM25ToAQI;
@@ -91,14 +92,20 @@ public class Main {
                 System.out.println("Initializing Firebase...");
 
                 String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
-                System.out.println("Firebase Credentials Path: " + jsonKeyFilePath);
+                GoogleCredentials credentials;
 
-                if (jsonKeyFilePath == null || jsonKeyFilePath.isEmpty()) {
-                    throw new FileNotFoundException("Firebase credentials path is not set.");
+                if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
+                    System.out.println("Firebase Credentials Path: " + jsonKeyFilePath);
+                    FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
+                    credentials = GoogleCredentials.fromStream(serviceAccount);
+                } else {
+                    String firebaseCredentials = System.getenv("FIREBASE_CREDENTIALS");
+                    if (firebaseCredentials == null || firebaseCredentials.isEmpty()) {
+                        throw new FileNotFoundException("Firebase credentials are not properly configured.");
+                    }
+                    InputStream serviceAccount = new ByteArrayInputStream(firebaseCredentials.getBytes(StandardCharsets.UTF_8));
+                    credentials = GoogleCredentials.fromStream(serviceAccount);
                 }
-
-                FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
-                GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
 
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(credentials)
