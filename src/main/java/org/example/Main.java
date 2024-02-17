@@ -122,17 +122,21 @@ public class Main {
     public static void initializeFirebase() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             GoogleCredentials credentials;
-            String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+            String firebaseCredentials = System.getenv("FIREBASE_CREDENTIALS");
 
-            if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
-                // Initialize Firebase using the JSON key file from the environment variable
-                FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
+            if (firebaseCredentials != null && !firebaseCredentials.isEmpty()) {
+                // When running on Heroku, use the JSON string directly
+                ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseCredentials.getBytes());
                 credentials = GoogleCredentials.fromStream(serviceAccount);
-            } else if (System.getenv("GAE_ENV") != null && System.getenv("GAE_ENV").equals("standard")) {
-                // When running on App Engine Standard, use the default credentials
-                credentials = GoogleCredentials.getApplicationDefault();
             } else {
-                throw new FileNotFoundException("Firebase credentials are not properly configured.");
+                // For local development, use the file path
+                String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+                if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
+                    FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
+                    credentials = GoogleCredentials.fromStream(serviceAccount);
+                } else {
+                    throw new FileNotFoundException("Firebase credentials are not properly configured.");
+                }
             }
 
             FirebaseOptions options = new FirebaseOptions.Builder()
