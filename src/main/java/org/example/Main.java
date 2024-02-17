@@ -23,8 +23,12 @@ public class Main {
 
 
     public static void main(String[] args) throws IOException {
-        String credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
-        System.out.println("Credentials Path: " + credentialsPath);
+        String firebaseCredentials = System.getenv("FIREBASE_CREDENTIALS");
+        if (firebaseCredentials == null || firebaseCredentials.isEmpty()) {
+            System.out.println("Firebase credentials are not set or are empty.");
+        } else {
+            System.out.println("Firebase credentials are configured.");
+        }
         initializeFirebase();
         SpringApplication.run(Main.class, args); // Start the Spring Boot application
 
