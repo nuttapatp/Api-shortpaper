@@ -60,4 +60,6 @@ public class LineNotifier {
     private String createJsonPayload(String message, String userId) {
         return "{\"to\": \"" + userId + "\", \"messages\": [{\"type\": \"text\", \"text\": \"" + message + "\"}]}";
     }
+
+
 }

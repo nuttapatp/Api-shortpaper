@@ -68,7 +68,8 @@ public class AirQualityApi {
         return -1; // or handle this case appropriately
     }
 
-
+    double latitude = 13.708333;
+    double longitude = 100.513284;
 
     public static void main(String[] args) {
         AirQualityApi api = new AirQualityApi();

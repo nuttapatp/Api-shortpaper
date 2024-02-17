@@ -5,36 +5,28 @@ import com.google.firebase.FirebaseOptions;
 import org.example.model.Location;
 import org.example.service.FirestoreService;
 import com.google.auth.oauth2.GoogleCredentials;
+import org.example.utils.UtilityMethods;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.example.utils.UtilityMethods.convertPM25ToAQI;
-
-
 @SpringBootApplication // This annotation is crucial for a Spring Boot application
+@ComponentScan(basePackages = {"org.example"})
 public class Main {
 
 
     public static void main(String[] args) throws IOException {
-        System.out.println("GOOGLE_APPLICATION_CREDENTIALS from System: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
-
-
-        initializeFirebase();
-
         String credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
         System.out.println("Credentials Path: " + credentialsPath);
+        initializeFirebase();
         SpringApplication.run(Main.class, args); // Start the Spring Boot application
-
-
-
-
 
     }
 
@@ -85,44 +77,67 @@ public class Main {
 
     }
 
+    public static void sendNotificationToUser(String userId, String message) {
 
-    public static void initializeFirebase() {
+        System.out.println("hello");
         try {
-            if (FirebaseApp.getApps().isEmpty()) {
-                System.out.println("Initializing Firebase...");
+            System.out.println("hello2");
 
-                String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
-                GoogleCredentials credentials;
+            FirestoreService firestoreService = new FirestoreService();
+            Location userLocation = firestoreService.getUserLatestLocation(userId); // Get user's location
 
-                if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
-                    System.out.println("Firebase Credentials Path: " + jsonKeyFilePath);
-                    FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
-                    credentials = GoogleCredentials.fromStream(serviceAccount);
-                } else {
-                    String firebaseCredentials = System.getenv("FIREBASE_CREDENTIALS");
-                    if (firebaseCredentials == null || firebaseCredentials.isEmpty()) {
-                        throw new FileNotFoundException("Firebase credentials are not properly configured.");
-                    }
-                    InputStream serviceAccount = new ByteArrayInputStream(firebaseCredentials.getBytes(StandardCharsets.UTF_8));
-                    credentials = GoogleCredentials.fromStream(serviceAccount);
-                }
+            System.out.println(userLocation);
+            System.out.println("hello3");
 
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(credentials)
-                        .setDatabaseUrl("https://line-storage-4b555-default-rtdb.asia-southeast1.firebasedatabase.app")
-                        .build();
+            if(userLocation != null) {
+                AirQualityApi api = new AirQualityApi();
+                LineNotifier notifier = new LineNotifier("vDVGmuffx5ZPx/NJp9t6QiJj12hlKFis1Mkbv9x5nrL9psjKV6CxrJ839oxyYME4pT919Em6hKaJyIgTXJSaK2guf5zS/KpHLwHnUNL9DzR6DJCQtT/mGkADqrgfheHik7NI+k2DcOKiwZBqlIts6QdB04t89/1O/w1cDnyilFU=");
 
-                FirebaseApp.initializeApp(options);
-                System.out.println("Firebase Initialized Successfully.");
-            } else {
-                System.out.println("Firebase already initialized.");
+
+                System.out.println("hello4");
+
+                // Fetch air quality data using the user's location
+                String response = api.fetchData(userLocation.getLatitude(), userLocation.getLongitude());
+                System.out.println("API Response: " + response);
+
+
+                double pm25Value = api.extractPM25Value(response);
+                int aqi = convertPM25ToAQI(pm25Value);
+                System.out.println("AQI value: " + aqi);
+
+                // Send a notification to the user with the PM2.5 value
+                String notificationMessage = "Your current AQI is: " + aqi;
+                notifier.sendLineMessageToUser(notificationMessage, userId);
+                System.out.println("Notification sent to user " + userId + ": " + notificationMessage);
+
             }
         } catch (Exception e) {
-            System.out.println("Error initializing Firebase: " + e.getMessage());
             e.printStackTrace();
         }
     }
+    public static void initializeFirebase() throws IOException {
+        if (FirebaseApp.getApps().isEmpty()) {
+            GoogleCredentials credentials;
+            String jsonKeyFilePath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
 
+            if (jsonKeyFilePath != null && !jsonKeyFilePath.isEmpty()) {
+                // Initialize Firebase using the JSON key file from the environment variable
+                FileInputStream serviceAccount = new FileInputStream(jsonKeyFilePath);
+                credentials = GoogleCredentials.fromStream(serviceAccount);
+            } else if (System.getenv("GAE_ENV") != null && System.getenv("GAE_ENV").equals("standard")) {
+                // When running on App Engine Standard, use the default credentials
+                credentials = GoogleCredentials.getApplicationDefault();
+            } else {
+                throw new FileNotFoundException("Firebase credentials are not properly configured.");
+            }
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(credentials)
+                    .build();
+
+            FirebaseApp.initializeApp(options);
+        }
+    }
 
 
 
